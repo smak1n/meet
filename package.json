@@ -32,7 +32,8 @@
       "!src/index.js",
       "!src/service-worker.js",
       "!src/reportWebVitals.js",
-      "!src/serviceWorkerRegistration.js"
+      "!src/serviceWorkerRegistration.js",
+      "!src/api.js"
     ]
   },
   "scripts": {
