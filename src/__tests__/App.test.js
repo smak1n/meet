@@ -75,13 +75,14 @@ describe('<App /> integration', () => {
     AppWrapper.unmount();
   });
 
-  test('"numberOfEvents" state of App is updated with new Number of Events', () => {
+  test('get list of events to match the number of events selected', async () => {
     const AppWrapper = mount(<App />);
-    const eventObject = { target: { value: 15 } };
-    const NumberOfEventsWrapper = AppWrapper.find(NumberOfEvents);
-    NumberOfEventsWrapper.find('.events-number').simulate('change', eventObject);
-    expect(AppWrapper.state('numberOfEvents')).toBe(15);
-    AppWrapper.unmount();
+    const NumberOfEventsWrapper = AppWrapper.find(NumberOfEvents)
+    await NumberOfEventsWrapper.instance().handleInputChanged({
+        target: { value: 1 },
+    });
+    expect(AppWrapper.state('events')).toHaveLength(1);
+    AppWrapper.mount();
   });
   
 });
