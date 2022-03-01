@@ -6,13 +6,15 @@ import NumberOfEvents from './NumberOfEvents';
 import { getEvents, extractLocations } from './api';
 import './nprogress.css';
 import logo from './images/logo192.png';
+import { OfflineAlert } from './Alert';
 
 class App extends Component {
   state = {
     events: [],
     locations: [],
     numberOfEvents: 32,
-    currentLocation: 'all'
+    currentLocation: 'all',
+    networkStatus: ''
   }
 
   componentDidMount() {
@@ -26,6 +28,15 @@ class App extends Component {
         });
       }
     });
+    if (!navigator.onLine) {
+      this.setState({
+        networkStatus: 'You are offline'
+      })
+    } else {
+      this.setState({
+        networkStatus: ''
+      })
+    }
   }
 
   componentWillUnmount() {
@@ -67,6 +78,7 @@ class App extends Component {
         <img src={logo} className="logo" alt="Meet Logo" />
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
         <NumberOfEvents numberOfEvents={this.state.numberOfEvents} updateEvents={this.updateEvents} />
+        <OfflineAlert text={this.state.networkStatus} />
         <EventList events={this.state.events} />
       </div>
     );
