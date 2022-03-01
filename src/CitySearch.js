@@ -20,7 +20,7 @@ class CitySearch extends Component {
         infoText: 'We can not find the city you are looking for. Please try another city',
       });
     } else {
-      return this.setState({
+      this.setState({
         query: value,
         suggestions,
         infoText: ''

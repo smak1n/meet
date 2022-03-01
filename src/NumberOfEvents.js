@@ -12,7 +12,6 @@ class NumberOfEvents extends Component {
     if (value < 1 || value > 32) {
       return this.setState({
         infoText: 'Select a number between 1 - 32',
-        numberOfEvents: '',
       });
     } else {
     this.setState({
