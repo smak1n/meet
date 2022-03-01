@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import * as atatus from 'atatus-spa';
-atatus.config('477a483426a74e988d84612d975b4007').install();
+atatus.config(`${process.env.REACT_APP_UNSPLASH_KEY}`).install();
 
 ReactDOM.render(
   <React.StrictMode>
