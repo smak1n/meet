@@ -21,30 +21,38 @@ class App extends Component {
 
   async componentDidMount() {
     this.mounted = true;
-    const accessToken = localStorage.getItem('access_token');
-    const isTokenValid = (await checkToken(accessToken)).error ?false : true;
-    const searchParams = new URLSearchParams(window.location.search);
-    const code = searchParams.get('code');
-    this.setState({ showWelcomeScreen: !(code || isTokenValid) });
-    if ((code || isTokenValid) && this.mounted) {
+
+    if ((localStorage.getItem('access_token') !== null) && (!navigator.onLine)) {
       getEvents().then((events) => {
         if (this.mounted) {
-          const filteredEvents = events.slice(0, this.numberOfEvents);
           this.setState({
-            events: filteredEvents,
-            locations: extractLocations(events)
-          });
-        }
-        if (!navigator.onLine) {
-          this.setState({
-            networkStatus: 'You are offline'
-          });
-        } else {
-          this.setState({
-            networkStatus: ''
+            networkStatus: 'You are offline. The events you see may not be up-to-date',
+            events: events,
+            numberOfEvents: events.slice(0, this.state.numberOfEvents),
+            locations:extractLocations(events),
+            showWelcomeScreen: false
           });
         }
       });
+    }
+    else {
+      const accessToken = localStorage.getItem('access_token');
+      const isTokenValid = (await checkToken(accessToken)).error ? false : true;
+      const searchParams = new URLSearchParams(window.location.search);
+      const code = searchParams.get('code');
+      this.setState({ showWelcomeScreen: !(code || isTokenValid) });
+      if ((code || isTokenValid) && this.mounted) {
+        getEvents().then((events) => {
+          if (this.mounted) {
+            const filteredEvents = events.slice(0, this.numberOfEvents);
+            this.setState({
+              events: filteredEvents,
+              locations: extractLocations(events),
+              networkStatus: ''
+            });
+          }
+        });
+      }
     }
   }
 
