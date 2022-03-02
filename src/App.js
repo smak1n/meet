@@ -3,10 +3,11 @@ import './App.css';
 import EventList from './EventList';
 import CitySearch from './CitySearch';
 import NumberOfEvents from './NumberOfEvents';
-import { getEvents, extractLocations } from './api';
+import { getEvents, extractLocations, checkToken, getAccessToken } from './api';
 import './nprogress.css';
 import logo from './images/logo192.png';
 import { OfflineAlert } from './Alert';
+import WelcomeScreen from './WelcomeScreen';
 
 class App extends Component {
   state = {
@@ -14,20 +15,28 @@ class App extends Component {
     locations: [],
     numberOfEvents: 32,
     currentLocation: 'all',
-    networkStatus: ''
+    networkStatus: '',
+    showWelcomeScreen: undefined
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.mounted = true;
-    getEvents().then((events) => {
-      if (this.mounted) {
-        const filteredEvents = events.slice(0, this.numberOfEvents);
-        this.setState({
-          events: filteredEvents,
-          locations: extractLocations(events)
-        });
-      }
-    });
+    const accessToken = localStorage.getItem('access_token');
+    const isTokenValid = (await checkToken(accessToken)).error ?false : true;
+    const searchParams = new URLSearchParams(window.location.search);
+    const code = searchParams.get('code');
+    this.setState({ showWelcomeScreen: !(code || isTokenValid) });
+    if ((code || isTokenValid) && this.mounted) {
+      getEvents().then((events) => {
+        if (this.mounted) {
+          const filteredEvents = events.slice(0, this.numberOfEvents);
+          this.setState({
+            events: filteredEvents,
+            locations: extractLocations(events)
+          });
+        }
+      });
+    }
     if (!navigator.onLine) {
       this.setState({
         networkStatus: 'You are offline'
@@ -73,6 +82,7 @@ class App extends Component {
   };
 
   render() {
+    if (this.state.showWelcomeScreen === undefined) return <div className="App" />
     return (
       <div className="App">
         <img src={logo} className="logo" alt="Meet Logo" />
@@ -80,6 +90,8 @@ class App extends Component {
         <NumberOfEvents numberOfEvents={this.state.numberOfEvents} updateEvents={this.updateEvents} />
         <OfflineAlert text={this.state.networkStatus} />
         <EventList events={this.state.events} />
+        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen}
+          getAccessToken={() => { getAccessToken() }} />
       </div>
     );
   }
