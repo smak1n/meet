@@ -35,15 +35,15 @@ class App extends Component {
             locations: extractLocations(events)
           });
         }
-        if (!navigator.onLine) {
-          this.setState({
-            networkStatus: 'You are offline'
-          })
-        } else {
-          this.setState({
-            networkStatus: ''
-          })
-        }
+      });
+    }
+    if (!navigator.onLine) {
+      this.setState({
+        networkStatus: 'You are offline'
+      });
+    } else {
+      this.setState({
+        networkStatus: ''
       });
     }
   }
