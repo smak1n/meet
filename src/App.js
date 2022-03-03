@@ -25,10 +25,10 @@ class App extends Component {
     if ((localStorage.getItem('access_token') !== null) && (!navigator.onLine)) {
       getEvents().then((events) => {
         if (this.mounted) {
+          const filteredEvents = events.slice(0, this.numberOfEvents);
           this.setState({
             networkStatus: 'You are offline. The events you see may not be up-to-date',
-            events: events,
-            numberOfEvents: events.slice(0, this.state.numberOfEvents),
+            events: filteredEvents,
             locations:extractLocations(events),
             showWelcomeScreen: false
           });
