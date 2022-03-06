@@ -42,9 +42,10 @@ function WelcomeScreen(props) {
       <Col>
       <h4>
           The Meet app is using https://www.googleapis.com/auth/calendar.events.readonly for
-          educational purposes only. The calendar accessed isn’t the user’s but a calendar provided by
-          CareerFoundry as part of their Full-Stack Immersion course. No user information is saved or
-          used within the application, and personal calendars aren’t accessed.
+          educational purposes only.<br />
+          The calendar accessed isn’t the user’s but a calendar provided by<br />
+          CareerFoundry as part of their Full-Stack Immersion course.
+          No user information is saved or used within the application, and personal calendars aren’t accessed. <br />
         </h4>
       </Col>
     </Row>
