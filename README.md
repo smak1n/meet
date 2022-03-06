@@ -30,3 +30,13 @@ Calendar API to fetch upcoming events.
 
 - As a user, I should be able to see a chart with several
   upcoming events in each city, so that I can choose which event to attend.
+
+## Technical Requirements
+
+- React App
+- TDD technique
+- Google Calendar API and OAuth2 authentication
+- Serverless functions (AWS lambda) for the authorization server
+- PWAs
+- Offline feature when once logged in
+- Data Visualization using recharts
