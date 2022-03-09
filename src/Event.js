@@ -17,7 +17,7 @@ class Event extends Component {
       <div className="event">
         <h1 className="summary">{event.summary}</h1>
         <p className="organizer">{event.organizer.email}</p>
-        <p className="time">{event.start.dateTime} - {event.end.dateTime}</p>
+        <p className="time">{event.start.dateTime} - {event.start.timeZone}</p>
         <p className="location">{event.location}</p>
         {
           showDetails && <p className="description">{event.description}</p>

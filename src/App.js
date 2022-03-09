@@ -3,28 +3,57 @@ import './App.css';
 import EventList from './EventList';
 import CitySearch from './CitySearch';
 import NumberOfEvents from './NumberOfEvents';
-import { getEvents, extractLocations } from './api';
+import { getEvents, extractLocations, checkToken, getAccessToken } from './api';
 import './nprogress.css';
+import logo from './images/logo192.png';
+import { OfflineAlert } from './Alert';
+import WelcomeScreen from './WelcomeScreen';
 
 class App extends Component {
   state = {
     events: [],
     locations: [],
     numberOfEvents: 32,
-    currentLocation: 'all'
+    currentLocation: 'all',
+    networkStatus: '',
+    showWelcomeScreen: undefined
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.mounted = true;
-    getEvents().then((events) => {
-      if (this.mounted) {
-        const filteredEvents = events.slice(0, this.numberOfEvents);
-        this.setState({
-          events: filteredEvents,
-          locations: extractLocations(events)
+
+    if ((localStorage.getItem('access_token') !== null) && (!navigator.onLine)) {
+      getEvents().then((events) => {
+        if (this.mounted) {
+          const filteredEvents = events.slice(0, this.numberOfEvents);
+          this.setState({
+            networkStatus: 'You are offline. The events you see may not be up-to-date',
+            events: filteredEvents,
+            locations:extractLocations(events),
+            showWelcomeScreen: false
+          });
+        }
+      });
+    }
+    else {
+      const accessToken = localStorage.getItem('access_token');
+      const isTokenValid = (await checkToken(accessToken)).error ? false : true;
+      const searchParams = new URLSearchParams(window.location.search);
+      const code = searchParams.get('code');
+      this.setState({ showWelcomeScreen: !(code || isTokenValid) });
+      if ((code || isTokenValid) && this.mounted) {
+        getEvents().then((events) => {
+          if (this.mounted) {
+            const filteredEvents = events.slice(0, this.numberOfEvents);
+            this.setState({
+              events: filteredEvents,
+              locations: extractLocations(events),
+              networkStatus: ''
+            });
+          }
         });
       }
-    });
+    }
   }
 
   componentWillUnmount() {
@@ -61,11 +90,16 @@ class App extends Component {
   };
 
   render() {
+    if (this.state.showWelcomeScreen === undefined) return <div className="App" />
     return (
       <div className="App">
+        <img src={logo} className="logo" alt="Meet Logo" />
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
         <NumberOfEvents numberOfEvents={this.state.numberOfEvents} updateEvents={this.updateEvents} />
+        <OfflineAlert text={this.state.networkStatus} />
         <EventList events={this.state.events} />
+        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen}
+          getAccessToken={() => { getAccessToken() }} />
       </div>
     );
   }
